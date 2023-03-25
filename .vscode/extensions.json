@@ -1,5 +1,6 @@
 {
     "recommendations": [
-        "joedevivo.vscode-circuitpython"
+        "joedevivo.vscode-circuitpython",
+        "ms-vscode.vscode-serial-monitor"
     ]
 }
