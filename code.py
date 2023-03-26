@@ -15,11 +15,16 @@ ColorMode_1038 = 0
 ColorMode_Cone = 1
 ColorMode_Cube = 2
 ColorMode_Confirmed = 3
-ColorMode_Ukraine = 4
-ColorMode_Rainbow = 5
+ColorMode_Rainbow = 4
 
+Nothing = 0
+Confirmed = 1
+Cone = 2
+Cube = 3
+
+IndicatorMode = Nothing
 ColorMode = ColorMode_1038 # Initialize
-BluePurpleLength = 8
+BluePurpleLength = 16
 
 serial = usb_cdc.data
 uart = busio.UART(board.GP0, board.GP1, baudrate=9600)
@@ -53,17 +58,18 @@ def GetChar():                   # Get any color change requests from the USB or
       Result = byte
    return Result if Result else ""
 
-def FillAllianceColor():
-   if (Alliance == "R" ):
-      for i in range(35, 48):         
-         pixels1[i] = (255, 0, 0)
-         pixels4[i] = (255, 0, 0)
-   if (Alliance == "B" ):
-      for i in range(35, 48):
-         pixels1[i] = (0, 0, 255)
-         pixels4[i] = (0, 0, 255)   
+# def FillAllianceColor():
+#    if (Alliance == "R" ):
+#       for i in range(35, 48):         
+#          pixels1[i] = (255, 0, 0)
+#          pixels4[i] = (255, 0, 0)
+#    if (Alliance == "B" ):
+#       for i in range(35, 48):
+#          pixels1[i] = (0, 0, 255)
+#          pixels4[i] = (0, 0, 255)   
 
 while True: 
+   print(switch.value)
    Incoming = GetChar()
    if Incoming != "":
       if (Incoming == b'R'):
@@ -74,19 +80,13 @@ while True:
          Alliance = "B"
       if (Incoming == b'G'):
          print("Green")
-         ColorMode = ColorMode_Confirmed
-         AnimationFrame = 0
+         IndicatorMode = Confirmed
       if (Incoming == b'Y'):
          print("Cone")
-         ColorMode = ColorMode_Cone
-         AnimationFrame = 0
+         IndicatorMode = Cone
       if (Incoming == b'P'):
          print("Cube")
-         ColorMode = ColorMode_Cube
-         AnimationFrame = 0
-      if (Incoming == b'U'):
-         print("Ukraine")
-         ColorMode = ColorMode_Ukraine
+         IndicatorMode = Cube
       if (Incoming == b'#'):
          print("1038")
          ColorMode = ColorMode_1038
@@ -94,52 +94,81 @@ while True:
          print("Rainbow")
          ColorMode = ColorMode_Rainbow
 
-   if (ColorMode == ColorMode_Cube):
-      if (switch.value):
-         for i in range(0, 35):
-            pixels1[i] = (152, 51, 250)
-            pixels4[i] = (152, 51, 250)
+   if (IndicatorMode == Cube):
+      if (switch.value == True):
+         for i in range(35, 48):
+            pixels1[i] = (200, 0, 200)
+            pixels4[i] = (200, 0, 200)
       else:
-         for i in range(0, 35):
-            pixels1[i] = (0, 0, 0)
-            pixels4[i] = (0, 0, 0)
+         if (switch.value == False):
+            for i in range(35, 48):
+               pixels1[i] = (0, 0, 0)
+               pixels4[i] = (0, 0, 0)
 
-   if (ColorMode == ColorMode_Cone): 
-      if (switch.value):
-         for i in range(0, 35):
+   if (IndicatorMode == Cone): 
+      if (switch.value == True):
+         for i in range(35, 48):
             pixels1[i] = (254, 214, 0)
             pixels4[i] = (254, 214, 0)
       else:
-         for i in range(0, 35):
-            pixels1[i] = (0, 0, 0)
-            pixels4[i] = (0, 0, 0)
-
-   if (ColorMode == ColorMode_Ukraine):
-      for i in range(0, 17):         
-         pixels1[i] = (254,214,0)
-         pixels1[i+18] = (0,197,187) 
-         pixels4[i] = (254,214,0)
-         pixels4[i+18] = (0,197,187) 
+         if (switch.value == False):
+            for i in range(35, 48):
+               pixels1[i] = (0, 0, 0)
+               pixels4[i] = (0, 0, 0)
 
    if (ColorMode == ColorMode_1038):
+      time.sleep(0.05)
       for i in range(0, RIGHT_SIDE):         
          if (((i + AnimationFrame) % (BluePurpleLength * 2)) >= BluePurpleLength):
-            pixels1[i] = (128,0,128)
+            pixels1[i] = (200,0,200)
          else:
-            pixels1[i] = (0,0,128)
+            pixels1[i] = (0,0,200)
+      for i in range(0, NICH_KNACK):         
+         if (((i + AnimationFrame) % (BluePurpleLength * 2)) >= BluePurpleLength):
+            pixels2[i] = (200,0,200)
+         else:
+            pixels2[i] = (0,0,200)
+      for i in range(0, LEFT_SIDE):         
+         if (((i + AnimationFrame) % (BluePurpleLength * 2)) >= BluePurpleLength):
+            pixels3[i] = (200,0,200)
+         else:
+            pixels3[i] = (0,0,200)
+      for i in range(0, LEFT_SIDE_FIX):         
+         if (((i + AnimationFrame) % (BluePurpleLength * 2)) >= BluePurpleLength):
+            pixels4[i] = (200,0,200)
+         else:
+            pixels4[i] = (0,0,200)
+      for i in range(0, X_FRAME):         
+         if (((i + AnimationFrame) % (BluePurpleLength * 2)) >= BluePurpleLength):
+            pixels5[i] = (200,0,200)
+         else:
+            pixels5[i] = (0,0,200)
 
-   if (ColorMode == ColorMode_Confirmed):
-      for i in range(0, RIGHT_SIDE):         
-         pixels1[i] = (0, 214, 0)
-      for i in range(0, LEFT_SIDE_FIX):                           
-         pixels4[i] = (0, 214, 0)      
+   if (IndicatorMode == Confirmed):
+      for i in range(35, 48):
+         pixels1[i] = (0, 255, 0)
+      for i in range(35, 48):
+         pixels4[i] = (0, 255, 0)
 
    if (ColorMode == ColorMode_Rainbow):
+      time.sleep(0.05)
       for i in range(0, RIGHT_SIDE):                  
          rc_index = (i * 256 // RIGHT_SIDE) + AnimationFrame * 16
          pixels1[i] = colorwheel(rc_index & 255)
+      for i in range(0, NICH_KNACK):                  
+         rc_index = (i * 256 // NICH_KNACK) + AnimationFrame * 16
+         pixels2[i] = colorwheel(rc_index & 255)
+      for i in range(0, LEFT_SIDE):                  
+         rc_index = (i * 256 // LEFT_SIDE) + AnimationFrame * 16
+         pixels3[i] = colorwheel(rc_index & 255)
+      for i in range(0, LEFT_SIDE_FIX):                  
+         rc_index = (i * 256 // LEFT_SIDE_FIX) + AnimationFrame * 16
+         pixels4[i] = colorwheel(rc_index & 255)
+      for i in range(0, X_FRAME):                  
+         rc_index = (i * 256 // X_FRAME) + AnimationFrame * 16
+         pixels5[i] = colorwheel(rc_index & 255)
 
-   FillAllianceColor()
+   # FillAllianceColor()
    
    pixels1.show()
    pixels2.show()
@@ -148,7 +177,9 @@ while True:
    pixels5.show()
 
    AnimationFrame = AnimationFrame + 1
-   if AnimationFrame > 15:
+   if AnimationFrame > 63:
       AnimationFrame = 0
-      if (ColorMode == ColorMode_Confirmed):  # After a little while of "Green", go back to 1038 animation
+      if (IndicatorMode == Confirmed):  # After a little while of "Green", go back to 1038 animation
+         IndicatorMode = Nothing
          ColorMode = ColorMode_1038
+   #time.sleep(0.05)
