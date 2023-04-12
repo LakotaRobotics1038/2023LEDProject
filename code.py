@@ -16,7 +16,6 @@ ColorMode_Cone = 1
 ColorMode_Cube = 2
 ColorMode_Confirmed = 3
 ColorMode_Rainbow = 4
-ColorMode_White = 5
 
 Nothing = 0
 Confirmed = 1
@@ -165,6 +164,10 @@ while True:
       if (Incoming == b'!'):
          print("Rainbow")
          ColorMode = ColorMode_Rainbow
+      if (Incoming == b'D'):
+         print("Disabled")
+         ColorMode = ColorMode_1038
+         IndicatorMode = Nothing
 
    if (ColorMode == ColorMode_1038):
        time.sleep(0.05)
